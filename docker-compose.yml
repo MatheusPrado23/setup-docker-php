@@ -1,0 +1,47 @@
+version: '3.3'
+services:
+    php:
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        container_name: app-php
+        ports:
+            - 8080:80
+        networks:
+            - eae-network
+        volumes:
+            - ./:/var/www/html
+
+    postgres:
+        image: postgres:14.2
+        container_name: postgres
+        restart: always
+        ports:
+            - 5432:5432
+        networks:
+            - eae-network
+        volumes:
+            - .docker/pgsql:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_PASSWORD=root
+            - POSTGRES_USER=root
+            - POSTGRES_DB=postgres
+
+    mysql:
+        image: mysql:8.0
+        container_name: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        ports:
+            - 3306:3306
+        networks:
+            - eae-network
+        volumes:
+            - .docker/mysql:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=root
+
+networks:
+    eae-network:
+        driver: bridge
